@@ -41,7 +41,7 @@ import Dygraph from 'dygraphs';
 
 export default function synchronize(/* dygraphs..., opts */) {
   if (arguments.length === 0) {
-    throw 'Invalid invocation of Dygraph.synchronize(). Need >= 1 argument.';
+    throw new Error('Invalid invocation of Dygraph.synchronize(). Need >= 1 argument.');
   }
 
   var OPTIONS = ['selection', 'zoom', 'range'];
@@ -55,7 +55,7 @@ export default function synchronize(/* dygraphs..., opts */) {
 
   var parseOpts = function(obj) {
     if (!(obj instanceof Object)) {
-      throw 'Last argument must be either Dygraph or Object.';
+      throw new Error('Last argument must be either Dygraph or Object.');
     } else {
       for (var i = 0; i < OPTIONS.length; i++) {
         var optName = OPTIONS[i];
@@ -74,37 +74,37 @@ export default function synchronize(/* dygraphs..., opts */) {
       }
     }
     if (i < arguments.length - 1) {
-      throw 'Invalid invocation of Dygraph.synchronize(). ' +
-            'All but the last argument must be Dygraph objects.';
-    } else if (i == arguments.length - 1) {
+      throw new Error('Invalid invocation of Dygraph.synchronize(). ' +
+            'All but the last argument must be Dygraph objects.');
+    } else if (i === arguments.length - 1) {
       parseOpts(arguments[arguments.length - 1]);
     }
   } else if (arguments[0].length) {
     // Invoked w/ list of dygraphs, options
-    for (var i = 0; i < arguments[0].length; i++) {
+    for (i = 0; i < arguments[0].length; i++) {
       dygraphs.push(arguments[0][i]);
     }
-    if (arguments.length == 2) {
+    if (arguments.length === 2) {
       parseOpts(arguments[1]);
     } else if (arguments.length > 2) {
-      throw 'Invalid invocation of Dygraph.synchronize(). ' +
-            'Expected two arguments: array and optional options argument.';
+      throw new Error('Invalid invocation of Dygraph.synchronize(). ' +
+            'Expected two arguments: array and optional options argument.');
     }  // otherwise arguments.length == 1, which is fine.
   } else {
-    throw 'Invalid invocation of Dygraph.synchronize(). ' +
-          'First parameter must be either Dygraph or list of Dygraphs.';
+    throw new Error('Invalid invocation of Dygraph.synchronize(). ' +
+          'First parameter must be either Dygraph or list of Dygraphs.');
   }
 
   if (dygraphs.length < 2) {
-    throw 'Invalid invocation of Dygraph.synchronize(). ' +
-          'Need two or more dygraphs to synchronize.';
+    throw new Error('Invalid invocation of Dygraph.synchronize(). ' +
+          'Need two or more dygraphs to synchronize.');
   }
 
   var readycount = dygraphs.length;
-  for (var i = 0; i < dygraphs.length; i++) {
+  for (i = 0; i < dygraphs.length; i++) {
     var g = dygraphs[i];
     g.ready( function() {
-      if (--readycount == 0) {
+      if (--readycount === 0) {
         // store original callbacks
         var callBackTypes = ['drawCallback', 'highlightCallback', 'unhighlightCallback'];
         for (var j = 0; j < dygraphs.length; j++) {
@@ -174,7 +174,7 @@ function attachZoomHandlers(gs, syncOpts, prevCallbacks) {
         if (syncOpts.range) opts.valueRange = me.yAxisRange();
 
         for (var j = 0; j < gs.length; j++) {
-          if (gs[j] == me) {
+          if (gs[j] === me) {
             if (prevCallbacks[j] && prevCallbacks[j].drawCallback) {
               prevCallbacks[j].drawCallback.apply(this, arguments);
             }
@@ -206,7 +206,7 @@ function attachSelectionHandlers(gs, prevCallbacks) {
         block = true;
         var me = this;
         for (var i = 0; i < gs.length; i++) {
-          if (me == gs[i]) {
+          if (me === gs[i]) {
             if (prevCallbacks[i] && prevCallbacks[i].highlightCallback) {
               prevCallbacks[i].highlightCallback.apply(this, arguments);
             }
@@ -224,7 +224,7 @@ function attachSelectionHandlers(gs, prevCallbacks) {
         block = true;
         var me = this;
         for (var i = 0; i < gs.length; i++) {
-          if (me == gs[i]) {
+          if (me === gs[i]) {
             if (prevCallbacks[i] && prevCallbacks[i].unhighlightCallback) {
               prevCallbacks[i].unhighlightCallback.apply(this, arguments);
             }

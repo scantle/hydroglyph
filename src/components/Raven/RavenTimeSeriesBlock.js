@@ -74,13 +74,16 @@ class RavenTimeSeriesBlock extends React.Component {
   readResponder(e) {
       const {dataType} = this.state;
       let parsed = raven_csvDate_parse(e.target.result);
-      let visible = new Array(parsed['header'].length - 1).fill(false);
+      let visible = new Array(parsed['header'].length - 1).fill(false);  // Header is date, precip, gauges (x1+)
       if (dataType === 'hydrograph') {
         // Assume precip in 0, first hydrograph in 1
         visible[1] = true;
-        // If second hydrograph is "observed" show it
-        if (parsed['header'][3].includes('(observed)')) {
-          visible[2] = true;
+        // More checks if there's multiple hydrographs present
+        if (parsed['header'].length > 3) {
+          // If second hydrograph is "observed" show it
+          if (parsed['header'][3].includes('(observed)')) {
+            visible[2] = true;
+          }
         }
       } else {
         // First value will display
