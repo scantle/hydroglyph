@@ -77,8 +77,6 @@ class PlotManager extends React.Component {
       synchronize(graphs, {zoom: true, selection: true, range: false});
     }
 
-    console.log(showWelcome);
-
     return(
       <div>
         <WelcomeMessage hidden={!showWelcome} hideWelcome={this.hideWelcome}/>

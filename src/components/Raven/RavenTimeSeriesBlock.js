@@ -51,7 +51,9 @@ class RavenTimeSeriesBlock extends React.Component {
   dataImport(e, d) {
     //this.closeModal();
     // To reduce calls to setState... (even though React is prettttty smart)
+    let fileURL = URL.createObjectURL(d.file.file);
     this.setState({file: d.file.file,
+                   fileURL : fileURL,
                    dataType: d.file.dataType,
                    open: false});
     let reader = new FileReader();
@@ -65,6 +67,7 @@ class RavenTimeSeriesBlock extends React.Component {
     let reader = new FileReader();
     reader.onloadend = this.readResponderReload;
     reader.readAsText(reloadFile);
+    console.log("RELOAD");
   }
 
   updateHandler(e) {
@@ -72,28 +75,28 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 
   readResponder(e) {
-      const {dataType} = this.state;
-      let parsed = raven_csvDate_parse(e.target.result);
-      let visible = new Array(parsed['header'].length - 1).fill(false);  // Header is date, precip, gauges (x1+)
-      if (dataType === 'hydrograph') {
-        // Assume precip in 0, first hydrograph in 1
-        visible[1] = true;
-        // More checks if there's multiple hydrographs present
-        if (parsed['header'].length > 3) {
-          // If second hydrograph is "observed" show it
-          if (parsed['header'][3].includes('(observed)')) {
-            visible[2] = true;
-          }
+    const {dataType} = this.state;
+    let parsed = raven_csvDate_parse(e.target.result);
+    let visible = new Array(parsed['header'].length - 1).fill(false);  // Header is date, precip, gauges (x1+)
+    if (dataType === 'hydrograph') {
+      // Assume precip in 0, first hydrograph in 1
+      visible[1] = true;
+      // More checks if there's multiple hydrographs present
+      if (parsed['header'].length > 3) {
+        // If second hydrograph is "observed" show it
+        if (parsed['header'][3].includes('(observed)')) {
+          visible[2] = true;
         }
-      } else {
-        // First value will display
-        visible[0] = true;
       }
-      this.setState({data : parsed['data'],
-                     labels: parsed['header'],
-                     title: parsed['header'][2],
-                     visibility: visible,
-                     pHeight: 340});
+    } else {
+      // First value will display
+      visible[0] = true;
+    }
+    this.setState({data : parsed['data'],
+                    labels: parsed['header'],
+                    title: parsed['header'][2],
+                    visibility: visible,
+                    pHeight: 340});
   }
 
   readResponderReload(e) {
