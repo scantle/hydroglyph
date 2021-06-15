@@ -5,6 +5,10 @@ import { Icon, Button } from 'semantic-ui-react';
 import WelcomeMessage from './WelcomeMessage';
 
 class PlotManager extends React.Component {
+  /** Plot Manager owns all the plot blocks as well as time series plots, for synchronization purposes
+   * 
+   * @param {object} props: None
+   */
   constructor(props) {
     super(props);
     this.state = {nplots: 1,
@@ -20,6 +24,7 @@ class PlotManager extends React.Component {
   }
 
   addPlot() {
+    /** Creates new plot at bottom */
     const {nplots, allplotcount} = this.state;
     const ocurrent = [...this.state.order, allplotcount + 1];
     const gcurrent = [...this.state.graphs, null];
@@ -32,6 +37,7 @@ class PlotManager extends React.Component {
   }
 
   delPlot(e,d) {
+    /** Removes plot by [o]key */
     const ncurrent = this.state.nplots;
     const ocurrent = [...this.state.order];
     const gcurrent = [...this.state.graphs];
@@ -44,6 +50,7 @@ class PlotManager extends React.Component {
   }
 
   gSet(key, graph) {
+    /** Sets DyGraph of plot, by key. */
     const {order} = this.state;
     let gcurrent = [...this.state.graphs];
     gcurrent[order.indexOf(key)] = graph;
@@ -52,6 +59,7 @@ class PlotManager extends React.Component {
   }
 
   hideWelcome() {
+    /** Hides the welcome/basic info block. Runs when welcome is closed or data is loaded. */
     this.setState({showWelcome : false});
   }
 

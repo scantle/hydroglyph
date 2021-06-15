@@ -13,6 +13,19 @@ import SeriesMenu from '../SeriesMenu';
 const ResizableBox = require('react-resizable').ResizableBox;
 
 class RavenTimeSeriesBlock extends React.Component {
+  /** Raven Times Series Block
+   *  Facilitates data reading and owns data for times series plots. Plot itself is held by PlotManager
+   *  to facilitate synced time series scrubbing (horizontal scrolling + subsetting).
+   *  Creates modals to import data, has close/reload buttons.
+   * 
+   * @param {object} props:
+   *  - key: int, unique key
+   *  - okey: int, unique key duplicate, becayse `key` is not exposed by React
+   *  - onClose: function, what happens when block close button is hit
+   *  - noClose: bool, whether the plot can be closed (e.g., last plot cannot be closed)
+   *  - graphSet: function, used to set/update graph to parent
+   *  - graph: DyGraph object (if data) passed from parent (to be passed to child TimeSeriesPlot component)
+   */
   constructor(props) {
     super(props);
     this.state = {open:   false,
@@ -34,14 +47,20 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 
   closeModal() {
+    /**  Closes child modal used to import data*/
     this.setState({open : false});
   }
 
   openModal() {
+    /** Opens child modal used to import data */
     this.setState({open : true});
   }
 
   onResize(e,d) {
+    /** Resize Handler (blocks can be dragged larger/smaller from bottom)
+     * - e, object, synthetic event (unused)
+     * - d, object, data with new height (d.size.height)
+     */
     const {pHeight} = this.state;
     if (Math.abs(d.size.height - pHeight) >= 5) {
       this.setState({pHeight : d.size.height});
@@ -49,6 +68,10 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 
   dataImport(e, d) {
+    /** Data Import Handler passed to child modal
+     * - e, object, synthetic event (unused)
+     * - d, object, with file object/metadata
+     */
     //this.closeModal();
     // To reduce calls to setState... (even though React is prettttty smart)
     let fileURL = URL.createObjectURL(d.file.file);
@@ -62,6 +85,8 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 
   dataReload() {
+    /** Non-working data reload function.
+     * Browsers don't like it when you re-access files on people's computers without new asking again. */
     const reloadFile = this.state.file;
     // If things were better we could just use dataImport
     let reader = new FileReader();
@@ -71,13 +96,20 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 
   updateHandler(e) {
+    /** Handles state updates from series menu
+     * - e: object, synthetic event with name of state property being updated (e.name) and new value (e.value)
+    */
     this.setState({[e.name] : e.value});
   }
 
   readResponder(e) {
+    /** Called when the dataImport call to the filereader are done loading the file
+     *  Parses the data and applies a default visibility based on data type
+     * - e: object, synthetic event returned from FileReader
+     */
     const {dataType} = this.state;
     let parsed = raven_csvDate_parse(e.target.result);
-    let visible = new Array(parsed['header'].length - 1).fill(false);  // Header is date, precip, gauges (x1+)
+    let visible = new Array(parsed['header'].length - 1).fill(false);
     if (dataType === 'hydrograph') {
       // Assume precip in 0, first hydrograph in 1
       visible[1] = true;
@@ -90,6 +122,7 @@ class RavenTimeSeriesBlock extends React.Component {
       }
     } else {
       // First value will display
+      //TODO defaults for other dataTypes
       visible[0] = true;
     }
     this.setState({data : parsed['data'],
@@ -100,6 +133,9 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 
   readResponderReload(e) {
+    /** Same as readResponder above, but preserves current visability settings
+     * Reload is not working, but the problem is not (likely) with this method
+     */
     let visible = [...this.state.visibility];
     let parsed = raven_csvDate_parse(e.target.result);
     //let visible = new Array(parsed['header'].length - 1).fill(false);
@@ -135,16 +171,16 @@ class RavenTimeSeriesBlock extends React.Component {
                                         axis="y"
                                         width={1000} height={pHeight}>
                           <Segment.Group raised horizontal style={{height: pHeight}}>
-                          <Segment style={{width:'100%'}}>
-                            <TimeSeriesPlot okey={okey}
-                                            data={data}
-                                            graph={graph}
-                                            graphSet={graphSet}
-                                            title={title}
-                                            labels={labels}
-                                            ylabel={ylabel}
-                                            visibility={visibility}
-                                            height={pHeight-30}/>
+                            <Segment style={{width:'100%'}}>
+                              <TimeSeriesPlot okey={okey}
+                                              data={data}
+                                              graph={graph}
+                                              graphSet={graphSet}
+                                              title={title}
+                                              labels={labels}
+                                              ylabel={ylabel}
+                                              visibility={visibility}
+                                              height={pHeight-30}/>
                             </ Segment>
                             <Segment style={{width:'330px', overflowY: 'scroll'}}>
                               <BlockCornerMenu close={onClose}
@@ -161,12 +197,6 @@ class RavenTimeSeriesBlock extends React.Component {
   }
 }
 
-//  <SeriesDropdown labels={labels.slice(1)} selected={visibility} onChange={this.updateHandler} />
-/*
-<RavenPlotOptions dataType={dataType}
-                  updateHandler={this.updateHandler}
-                  visibility={visibility}
-                  labels={labels}/>
-*/
+//  <SeriesDropdown labels={labels.slice(1)} selected={visibility} onChange={this.updateHandler} /> Depricated menu
 
 export default RavenTimeSeriesBlock;

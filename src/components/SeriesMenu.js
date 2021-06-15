@@ -2,6 +2,15 @@ import React from 'react'
 import { Menu } from 'semantic-ui-react';
 
 class SeriesMenu extends React.Component {
+  /** Menu for time series blocks
+   *  Currently just changes visibility in plots
+   *  //TODO: Should be able to change color, line type as well
+   * 
+   * @param {object} props:
+   *  - labels: str array of names of various time series on plot
+   *  - selected: bool array of which series are currently visible
+   *  - onChange: function from parent called when a series is (de)selected
+   */
   state = {selected : this.props.selected}
   update = this.update.bind(this);
 

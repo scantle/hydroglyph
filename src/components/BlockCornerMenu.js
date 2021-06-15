@@ -8,6 +8,7 @@ Props:
  - disabled (bool)
 */
 
+/* CSS Styles */
 const cssFix = {position: 'absolute',
                 right: '2px',
                 top: '5px'}
@@ -18,6 +19,13 @@ const icoStyle = {
 }
 
 const BlockCornerMenu = (props) => (
+  /** Corner buttons for closing/refreshing blocks
+   * @param {object} props:
+   * - okay: unique block key 
+   * - close: function, what happens when close button is hit
+   * - disabled: bool, whether the block can be closed (e.g., last plot cannot be closed)
+   * - refresh: function, run when refresh ("redo") button is hit
+   */
   <div style={cssFix} >
     <Icon name='close' link
           okey={props.okey}
@@ -28,7 +36,7 @@ const BlockCornerMenu = (props) => (
     <Icon name='redo alternate' link
           okey={props.okey}
           onClick={props.refresh}
-          disabled={props.disabled}
+          disabled={props.disabled}   //TODO: Refresh really shouldn't be disabled too
           size='large'
           style={icoStyle}/>
   </div>

@@ -2,6 +2,9 @@ import React from 'react'
 import { Dropdown, Header } from 'semantic-ui-react';
 
 class SeriesDropdown extends React.Component {
+  /** 
+   * Dropdown menu for selecting visible series
+   */
   state = {selected : this.props.selected}
   update = this.update.bind(this);
 

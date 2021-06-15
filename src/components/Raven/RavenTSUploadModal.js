@@ -1,7 +1,18 @@
 import React from 'react';
 import { Modal, Icon, Button, Divider, Input, Message, Menu} from 'semantic-ui-react';
 
+//TODO: Either rename file or class
+//(decision depends on whether this modal will be used to upload other forms of data or not)
+// I'd lean toward just renaming the file
+
 class DataUploadModal extends React.Component {
+  /** Model used to select [time series] data from Raven output csv files on the user's computer
+   * @param {object} props:
+   *  - onUpload: function run when the user has selected a file and hit the "Import File" modal button
+   *  - open: bool, whether modal is open
+   *  - close: function used to close modal
+   *  - data: bool, whether there is data loaded for the parent block (not used??)
+  */
   constructor(props) {
     super(props);
     this.state = {file:     null,

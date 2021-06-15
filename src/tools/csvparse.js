@@ -1,6 +1,12 @@
 import { detectLineDelimiter } from "dygraphs/src/dygraph-utils";
 
 function raven_csvDate_parse(csvstring) {
+  /** Custom parsing function for Raven Time Series CSV files.
+   * @param {str} csvstring: csv file as a string
+   * @returns {object}:
+   *  - header: array str of file header (series [column] names)
+   *  - data: data in DyGraphs format
+   */
   const delim = detectLineDelimiter(csvstring)
   // Separate by line, then by comma
   csvstring = csvstring.split(delim);

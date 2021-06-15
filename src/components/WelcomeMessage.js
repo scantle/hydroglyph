@@ -4,6 +4,11 @@ import Mailto from 'react-protected-mailto'
 import UWLogo from '../UWLogo.png'
 
 const WelcomeMessage = (props) => (
+  /** Small "message" block displaying basic information about Hydroglyph & Raven
+   * @param {object} props:
+   *  - hidden: bool, whether the block is visible (false) or not (true)
+   *  - hideWelcome: function run when block is closed (onDismiss)
+   */
   <Message icon
            hidden={props.hidden}
            style={{width: '50%', 
